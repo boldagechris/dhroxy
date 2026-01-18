@@ -4,7 +4,7 @@ FROM gradle:9.2.1-jdk21-alpine AS build
 WORKDIR /workspace
 COPY . .
 # Produce the Spring Boot fat jar
-RUN ./gradlew bootJar --no-daemon
+RUN gradle bootJar --no-daemon
 
 FROM gcr.io/distroless/java21-debian12:nonroot
 WORKDIR /app
