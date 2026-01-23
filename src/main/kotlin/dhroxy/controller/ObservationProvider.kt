@@ -31,11 +31,21 @@ class ObservationProvider(
         details: ServletRequestDetails
     ): IBundleProvider {
         val categoryValue = extractCategory(category, details)
-        val (fra, til) = extractDateRange(date, details.parameters["date"])
+        var (fra, til) = extractDateRange(date, details.parameters["date"])
+
+        // sundhed.dk requires both fra and til to be specified
+        // If til is missing, default to today
+        if (til == null && fra != null) {
+            til = java.time.LocalDate.now().toString()
+        }
+
+        // Add timestamps for sundhed.dk API compatibility
+        val fraWithTime = fra?.let { addTimeToDate(it, "T00:00:00") }
+        val tilWithTime = til?.let { addTimeToDate(it, "T23:59:59") }
         val omraade = mapCategoryToOmraade(categoryValue)
         val headers = toHttpHeaders(details)
         val bundle = runBlocking {
-            observationService.search(headers, fra, til, omraade, requestUrl(details))
+            observationService.search(headers, fraWithTime, tilWithTime, omraade, requestUrl(details))
         }
         return SimpleBundleProvider(bundle.entry.mapNotNull { it.resource as? Observation })
     }
@@ -140,5 +150,12 @@ class ObservationProvider(
             }
         }
         return result
+    }
+
+    private fun addTimeToDate(date: String, time: String): String {
+        // If date already contains time, return as-is
+        if (date.contains("T")) return date
+        // Otherwise append the time component
+        return date + time
     }
 }
