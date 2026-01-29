@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head><title>Icon Generator</title></head>
+<body>
+<canvas id="canvas16" width="16" height="16"></canvas>
+<canvas id="canvas48" width="48" height="48"></canvas>
+<canvas id="canvas128" width="128" height="128"></canvas>
+<script>
+// Simple icon generator
+function createIcon(canvas, size) {
+  const ctx = canvas.getContext('2d');
+  
+  // Background
+  ctx.fillStyle = '#0066cc';
+  ctx.fillRect(0, 0, size, size);
+  
+  // Medical cross
+  ctx.fillStyle = 'white';
+  const crossWidth = size * 0.25;
+  const crossHeight = size * 0.7;
+  const centerX = size / 2;
+  const centerY = size / 2;
+  
+  // Vertical bar
+  ctx.fillRect(centerX - crossWidth/2, centerY - crossHeight/2, crossWidth, crossHeight);
+  // Horizontal bar
+  ctx.fillRect(centerX - crossHeight/2, centerY - crossWidth/2, crossHeight, crossWidth);
+}
+
+createIcon(document.getElementById('canvas16'), 16);
+createIcon(document.getElementById('canvas48'), 48);
+createIcon(document.getElementById('canvas128'), 128);
+
+// Download instruction
+document.body.insertAdjacentHTML('beforeend', '<p>Right-click each canvas and "Save Image As" to icon16.png, icon48.png, icon128.png</p>');
+</script>
+</body>
+</html>

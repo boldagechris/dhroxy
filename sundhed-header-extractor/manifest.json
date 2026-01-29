@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Sundhed.dk Header Extractor",
+  "version": "1.0.0",
+  "description": "Extracts authentication headers from sundhed.dk for use with dhroxy FHIR proxy",
+  "permissions": [
+    "webRequest",
+    "storage",
+    "cookies"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "host_permissions": [
+    "https://www.sundhed.dk/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.sundhed.dk/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

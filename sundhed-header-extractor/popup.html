@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sundhed.dk Header Extractor</title>
+  <style>
+    body {
+      width: 600px;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 0 15px 0;
+      color: #333;
+    }
+
+    .status {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .header-section {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-label {
+      font-weight: 600;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-value {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      word-break: break-all;
+      color: #333;
+      border: 1px solid #dee2e6;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    .header-value.empty {
+      color: #999;
+      font-style: italic;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button.primary {
+      background: #007bff;
+      color: white;
+    }
+
+    button.primary:hover {
+      background: #0056b3;
+    }
+
+    button.secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    button.secondary:hover {
+      background: #545b62;
+    }
+
+    button.success {
+      background: #28a745;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .copy-feedback {
+      display: none;
+      padding: 8px;
+      background: #28a745;
+      color: white;
+      text-align: center;
+      border-radius: 4px;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    .copy-feedback.show {
+      display: block;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .instructions {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+      margin-top: 15px;
+      padding: 12px;
+      background: white;
+      border-radius: 6px;
+      border-left: 4px solid #007bff;
+    }
+
+    .instructions strong {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏥 Sundhed.dk Header Extractor</h1>
+
+  <div id="status" class="status warning">
+    Waiting for sundhed.dk to load...
+  </div>
+
+  <div class="header-section">
+    <div class="header-label">Cookie</div>
+    <div id="cookie" class="header-value empty">Not captured yet</div>
+  </div>
+
+  <div class="header-section">
+    <div class="header-label">X-XSRF-Token</div>
+    <div id="xsrf" class="header-value empty">Not captured yet</div>
+  </div>
+
+  <div class="header-section">
+    <div class="header-label">Conversation-UUID</div>
+    <div id="uuid" class="header-value empty">Not captured yet</div>
+  </div>
+
+  <div class="header-section">
+    <div class="header-label">User-Agent</div>
+    <div id="userAgent" class="header-value empty">Not captured yet</div>
+  </div>
+
+  <div class="button-group">
+    <button id="copyEnv" class="primary" disabled>Copy as ENV Variables</button>
+    <button id="copyDocker" class="secondary" disabled>Copy Docker Command</button>
+  </div>
+
+  <div class="button-group">
+    <button id="copyYaml" class="primary" disabled>Copy YAML Config</button>
+    <button id="downloadYaml" class="secondary" disabled>Download application.yml</button>
+  </div>
+
+  <button id="refresh" class="success" style="width: 100%; margin-top: 10px;">
+    🔄 Refresh Headers
+  </button>
+
+  <button id="debugCookies" class="secondary" style="width: 100%; margin-top: 10px;">
+    🔍 Debug: Show All Cookies
+  </button>
+
+  <div id="copyFeedback" class="copy-feedback">
+    ✓ Copied to clipboard!
+  </div>
+
+  <div class="instructions">
+    <strong>How to use:</strong><br>
+    1. Navigate to <strong>www.sundhed.dk</strong> and log in<br>
+    2. Click "🔄 Refresh Headers" to capture authentication data<br>
+    3. Choose your method:<br>
+    &nbsp;&nbsp;&nbsp;• <strong>ENV Variables</strong> - for terminal use<br>
+    &nbsp;&nbsp;&nbsp;• <strong>Docker Command</strong> - ready to run<br>
+    &nbsp;&nbsp;&nbsp;• <strong>YAML Config</strong> - copy or download application.yml<br>
+    4. For YAML: Download and replace <code>src/main/resources/application.yml</code>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+sundhed:
+  client:
+    base-url: "https://www.sundhed.dk"
+    connect-timeout: 5s
+    read-timeout: 20s
+    # forwarded-headers: # defaults to "accept", "cookie","conversation-uuid","x-xsrf-token","x-queueit-ajaxpageurl","referer","user-agent","accept-language","page-app-id","dnt"
+    fallback-headers:
+      user-agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+      # Auth headers removed - must be provided by client via X-Sundhed-* headers
+
+spring:
+  main:
+    web-application-type: servlet
+  ai:
+    mcp:
+      server:
+        enabled: true
+
+logging:
+  level:
+    dhroxy: DEBUG
+    org.springframework.web: DEBUG
